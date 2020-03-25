@@ -50,6 +50,7 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
     private IUpdatePrompter mPrompter;
 
     private OnFailureListener mOnFailureListener;
+    private OnFinishListener mOnFinishListener;
 
     private OnDownloadListener mOnDownloadListener;
     private OnDownloadListener mOnNotificationDownloadListener;
@@ -99,6 +100,10 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
         mOnFailureListener = listener;
     }
 
+    public void setOnFinishListener(OnFinishListener listener) {
+        mOnFinishListener = listener;
+    }
+
 
     public void setInfo(UpdateInfo info) {
         mInfo = info;
@@ -140,6 +145,13 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
     }
 
     @Override
+    public void cancel() {
+        if(mOnFinishListener != null) {
+            mOnFinishListener.onFinish(OnFinishListener.FinishType.CANCEL);
+        }
+    }
+
+    @Override
     public void onStart() {
         if (mInfo.isSilent) {
             mOnNotificationDownloadListener.onStart();
@@ -167,6 +179,10 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
         if (mError != null) {
             mOnFailureListener.onFailure(mError);
         } else {
+            if(mOnFinishListener != null) {
+                mOnFinishListener.onFinish(OnFinishListener.FinishType.DOWNLOAD);
+            }
+
             mTmpFile.renameTo(mApkFile);
             if (mInfo.isAutoInstall) {
                 doInstall();

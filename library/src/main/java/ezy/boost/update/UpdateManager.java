@@ -73,6 +73,7 @@ public class UpdateManager {
         private OnDownloadListener mOnDownloadListener;
         private IUpdatePrompter mPrompter;
         private OnFailureListener mOnFailureListener;
+        private OnFinishListener mOnFinishListener;
 
         private IUpdateParser mParser;
         private IUpdateChecker mChecker;
@@ -143,6 +144,11 @@ public class UpdateManager {
             return this;
         }
 
+        public Builder setOnFinishListener(@NonNull OnFinishListener listener) {
+            mOnFinishListener = listener;
+            return this;
+        }
+
         private static long sLastTime;
 
         public void check() {
@@ -165,6 +171,9 @@ public class UpdateManager {
             }
             if (mOnFailureListener != null) {
                 agent.setOnFailureListener(mOnFailureListener);
+            }
+            if (mOnFinishListener != null) {
+                agent.setOnFinishListener(mOnFinishListener);
             }
             if (mChecker != null) {
                 agent.setChecker(mChecker);

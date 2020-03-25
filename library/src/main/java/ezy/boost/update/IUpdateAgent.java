@@ -22,4 +22,6 @@ public interface IUpdateAgent {
     void update();
 
     void ignore();
+
+    void cancel();
 }
