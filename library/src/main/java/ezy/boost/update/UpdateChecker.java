@@ -23,12 +23,15 @@ import java.net.URL;
 public class UpdateChecker implements IUpdateChecker {
 
     final byte[] mPostData;
+    final int mTimeout;
 
     public UpdateChecker() {
         mPostData = null;
+        mTimeout = 0;
     }
-    public UpdateChecker(byte[] data) {
+    public UpdateChecker(byte[] data, int timeout) {
         mPostData = data;
+        mTimeout = timeout;
     }
 
     @Override
@@ -37,6 +40,11 @@ public class UpdateChecker implements IUpdateChecker {
         try {
             connection = (HttpURLConnection) new URL(url).openConnection();
             connection.setRequestProperty("Accept", "application/json");
+
+            if(mTimeout != 0) {
+                connection.setConnectTimeout(mTimeout);
+                connection.setReadTimeout(mTimeout);
+            }
 
             if (mPostData == null) {
                 connection.setRequestMethod("GET");

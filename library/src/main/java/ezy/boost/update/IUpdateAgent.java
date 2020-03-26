@@ -19,6 +19,8 @@ package ezy.boost.update;
 public interface IUpdateAgent {
     UpdateInfo getInfo();
 
+    void prompt();
+
     void update();
 
     void ignore();

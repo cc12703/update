@@ -51,6 +51,7 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
 
     private OnFailureListener mOnFailureListener;
     private OnFinishListener mOnFinishListener;
+    private OnShowListener mOnShowListener;
 
     private OnDownloadListener mOnDownloadListener;
     private OnDownloadListener mOnNotificationDownloadListener;
@@ -104,6 +105,10 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
         mOnFinishListener = listener;
     }
 
+    public void setOnShowListener(OnShowListener listener) {
+        mOnShowListener = listener;
+    }
+
 
     public void setInfo(UpdateInfo info) {
         mInfo = info;
@@ -127,6 +132,13 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
     @Override
     public void setError(UpdateError error) {
         mError = error;
+    }
+
+    @Override
+    public void prompt() {
+        if(mOnShowListener != null) {
+            mOnShowListener.onShow(OnShowListener.ShowType.PROMPT);
+        }
     }
 
     @Override
@@ -312,6 +324,9 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
             if (mContext instanceof Activity && ((Activity) mContext).isFinishing()) {
                 return;
             }
+
+            agent.prompt();
+
             final UpdateInfo info = agent.getInfo();
             String size = Formatter.formatShortFileSize(mContext, info.size);
             String content = String.format("最新版本：%1$s\n新版本大小：%2$s\n\n更新内容\n%3$s", info.versionName, size, info.updateContent);

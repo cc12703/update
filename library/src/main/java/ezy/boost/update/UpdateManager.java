@@ -68,12 +68,14 @@ public class UpdateManager {
         private boolean mIsManual;
         private boolean mIsWifiOnly;
         private int mNotifyId = 0;
+        private int mCheckTimeout = 0;
 
         private OnDownloadListener mOnNotificationDownloadListener;
         private OnDownloadListener mOnDownloadListener;
         private IUpdatePrompter mPrompter;
         private OnFailureListener mOnFailureListener;
         private OnFinishListener mOnFinishListener;
+        private OnShowListener mOnShowListener;
 
         private IUpdateParser mParser;
         private IUpdateChecker mChecker;
@@ -108,6 +110,11 @@ public class UpdateManager {
 
         public Builder setWifiOnly(boolean isWifiOnly) {
             mIsWifiOnly = isWifiOnly;
+            return this;
+        }
+
+        public Builder setCheckTimeout(int timeout) {
+            mCheckTimeout = timeout;
             return this;
         }
 
@@ -149,6 +156,11 @@ public class UpdateManager {
             return this;
         }
 
+        public Builder setOnShowListener(@NonNull OnShowListener listener) {
+            mOnShowListener = listener;
+            return this;
+        }
+
         private static long sLastTime;
 
         public void check() {
@@ -175,10 +187,13 @@ public class UpdateManager {
             if (mOnFinishListener != null) {
                 agent.setOnFinishListener(mOnFinishListener);
             }
+            if (mOnShowListener != null) {
+                agent.setOnShowListener(mOnShowListener);
+            }
             if (mChecker != null) {
                 agent.setChecker(mChecker);
             } else {
-                agent.setChecker(new UpdateChecker(mPostData));
+                agent.setChecker(new UpdateChecker(mPostData, mCheckTimeout));
             }
             if (mParser != null) {
                 agent.setParser(mParser);

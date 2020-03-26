@@ -38,7 +38,7 @@ public class DefaultPromptClickListener implements DialogInterface.OnClickListen
             mAgent.ignore();
             break;
         case DialogInterface.BUTTON_NEGATIVE:
-            // not now
+            mAgent.cancel();
             break;
         }
         if (mIsAutoDismiss) {
